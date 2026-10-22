@@ -1,0 +1,20 @@
+# Optional Blueprint. Free web service; the database is an external Postgres (Neon), so no disk is needed.
+# After creating it, set DATABASE_URL in the Render dashboard (Environment tab).
+services:
+  - type: web
+    name: iris-clone
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true

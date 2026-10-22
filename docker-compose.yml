@@ -1,0 +1,14 @@
+services:
+  iris:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports: ["3000:3000"]
+    environment:
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set in .env}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?set in .env}
+    volumes:
+      - iris-data:/data
+    restart: unless-stopped
+volumes:
+  iris-data:

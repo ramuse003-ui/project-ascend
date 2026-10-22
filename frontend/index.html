@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | IRIS</title>
+<meta name="description" content="IRIS :: The online Student and Management Information System of NITK Surathkal. Admission Portal, Student and Faculty Portal, Online Course Learning Management and much more...">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Language" content="en">
+<meta name="msapplication-tap-highlight" content="no">
+<link rel="image_src" href="https://cdn.iris.nitk.ac.in/iris logo2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="shortcut icon" type="image/png" href="https://cdn.iris.nitk.ac.in/iris logo2.png" id="favicon" data-original-href="https://cdn.iris.nitk.ac.in/iris logo2.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Original IRIS stylesheets -->
+<link rel="stylesheet" href="https://cdn.iris.nitk.ac.in/design_system/assets/css/base.css?v=8841bc463e85dc5a10538ba0d833d2fa2e167fbb">
+<link rel="stylesheet" href="https://cdn.iris.nitk.ac.in/design_system/iris_assets/css/overrides.css?v=8841bc463e85dc5a10538ba0d833d2fa2e167fbb">
+<link href="https://cdn.iris.nitk.ac.in/new_layout/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===================== LOGIN PAGE ===================== -->
+<div id="page-login" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo"><span class="lg-i1">I</span><span class="lg-r">r</span><span class="lg-i2">I</span><span class="lg-s">s</span></div>
+    <p class="auth-sub">Sign in to your NITK Surathkal IRIS account</p>
+    <div class="field">
+      <label>Roll Number</label>
+      <input type="text" id="login-roll" placeholder="Enter your roll number">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••">
+    </div>
+    <div class="form-error" id="login-error" role="alert"></div>
+    <button class="btn-primary" id="login-btn" onclick="handleLogin()">Log In</button>
+    <p class="auth-switch">Don't have a profile yet? <span onclick="showPage('register')">Create one</span></p>
+  </div>
+</div>
+
+<!-- ===================== REGISTER PAGE ===================== -->
+<div id="page-register" class="auth-wrap hidden">
+  <div class="auth-card wide">
+    <div class="auth-logo"><span class="lg-i1">I</span><span class="lg-r">r</span><span class="lg-i2">I</span><span class="lg-s">s</span></div>
+    <p class="auth-sub">Set up your profile to see your personalised dashboard</p>
+
+    <div class="photo-upload">
+      <div class="photo-preview" id="photo-preview">
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+      </div>
+      <div>
+        <label class="btn-secondary" style="display:inline-block;">
+          Upload photo
+          <input type="file" id="reg-photo" accept="image/*" style="display:none" onchange="previewPhoto(event)">
+        </label>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="Enter your full name">
+      </div>
+      <div class="field">
+        <label>Roll Number</label>
+        <input type="text" id="reg-roll" placeholder="Enter your roll number">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Semester</label>
+        <input type="number" id="reg-semester" placeholder="Current semester" min="1" max="8">
+      </div>
+      <div class="field">
+        <label>Major Credits</label>
+        <input type="number" id="reg-credits" placeholder="Total major credits">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Major CGPA</label>
+        <input type="text" id="reg-cgpa" placeholder="Your CGPA">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="At least 8 characters" autocomplete="new-password">
+      </div>
+    </div>
+
+    <div id="reg-details"></div>
+
+    <div class="section-label">Courses</div>
+    <div class="courses-head">
+      <div>Code</div><div>Course Name</div><div>Attended</div><div>Total</div><div></div>
+    </div>
+    <div id="courses-container"></div>
+    <button type="button" class="add-course-btn" onclick="addCourseRow()">+ Add course</button>
+
+    <div class="form-error" id="register-error" role="alert" style="margin-top:16px;"></div>
+    <div style="margin-top:12px;">
+      <button class="btn-primary" id="register-btn" onclick="handleRegister()">Create profile &amp; view dashboard</button>
+    </div>
+    <p class="auth-switch">Already have a profile? <span onclick="showPage('login')">Log in</span></p>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD PAGE ===================== -->
+<div id="page-dashboard" class="hidden" data-view="dashboard">
+
+  <div class="topbar app-top-bar bg-royal top-bar-text-light">
+    <div class="top-bar-left">
+      <ul class="nav">
+        <li class="nav-item">
+          <a href="https://www.nitk.ac.in/" target="_blank" class="nav-link" rel="noopener noreferrer" alt="NITK emblem">NITK Surathkal</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" target="blank" href="#">About IRIS</a>
+        </li>
+      </ul>
+    </div>
+    <div class="top-bar-right">
+      <ul class="nav">
+        <li class="nav-item" style="display: flex; align-items: center;">
+          <a class="nav-link" href="#">Terms of Service</a>
+        </li>
+        <li class="nav-item">
+          <img src="assets/csd-logo.png" alt="CSD logo" class="csd-logo">
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="logo" onclick="showView('dashboard')" style="cursor:pointer" title="Dashboard"><span class="lg-i1">I</span><span class="lg-r">r</span><span class="lg-i2">I</span><span class="lg-s">s</span></div>
+    <nav class="nav" id="main-nav">
+      <div class="nav-dropdown">
+        <div class="nav-item" onclick="event.stopPropagation();toggleNavMenu('institute')"><img src="assets/nitk-logo.png" alt="NITK" class="nitk-icon"><span>Institute</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="mega-menu hidden" id="navmenu-institute" onclick="event.stopPropagation()">
+          <div class="mega-col">
+            <div class="mega-block">
+              <div class="mega-heading">Main Building</div>
+              <div class="mega-link">No Dues</div>
+            </div>
+            <div class="mega-block">
+              <div class="mega-heading">Administration</div>
+              <div class="mega-link">Fees Payment</div>
+            </div>
+          </div>
+          <div class="mega-col">
+            <div class="mega-block">
+              <div class="mega-heading">Others</div>
+              <div class="mega-link">Tell IRIS</div>
+              <div class="mega-link">IRIS Forms</div>
+              <div class="mega-link">Announcements</div>
+              <div class="mega-link">Useful Links <span class="badge-new">NEW</span></div>
+              <div class="mega-link">Guides Links <span class="badge-new">NEW</span></div>
+              <div class="mega-link">Service Requests</div>
+            </div>
+            <div class="mega-block">
+              <div class="mega-heading" id="nav-roll-heading">—</div>
+              <div class="mega-link">My Profile</div>
+              <div class="mega-link">Manage nitk.edu.in Accounts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <div class="nav-item" onclick="event.stopPropagation();toggleNavMenu('academics')"><em class="nav-icon-big lnr-graduation-hat"></em><span>Academics</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="mega-menu hidden" id="navmenu-academics" onclick="event.stopPropagation()">
+          <div class="mega-col">
+            <div class="mega-block">
+              <div class="mega-heading">Courses</div>
+              <div class="mega-link">Course Registration</div>
+              <div class="mega-link">View Feedback Forms</div>
+              <div class="mega-link">My Courses and Exam Grades</div>
+              <div class="mega-link">My Timetable <span class="badge-new">NEW</span></div>
+            </div>
+            <div class="mega-block">
+              <div class="mega-heading">Integrations</div>
+              <div class="mega-link">Login to Moodle</div>
+              <div class="mega-link">Login to Autolab</div>
+              <div class="mega-link">Library Remote Access Database</div>
+            </div>
+          </div>
+          <div class="mega-col">
+            <div class="mega-block">
+              <div class="mega-heading">Others</div>
+              <div class="mega-link">My Provisional Degree</div>
+              <div class="mega-link">My Grade Card</div>
+              <div class="mega-link">My Credits Tracker <span class="badge-new">NEW</span></div>
+              <div class="mega-link">My Attendance Card</div>
+              <div class="mega-link">Gyan</div>
+              <div class="mega-link">Projects Portal <span class="badge-new">NEW</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <div class="nav-item" onclick="event.stopPropagation();toggleNavMenu('campus')"><i class="nav-icon-big lnr-apartment"></i><span>Campus</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="mega-menu hidden" id="navmenu-campus" onclick="event.stopPropagation()">
+          <div class="mega-col">
+            <div class="mega-block">
+              <div class="mega-heading">Campus</div>
+              <div class="mega-link">Career Development Centre</div>
+              <div class="mega-link">Calendar and Events (CEMS)</div>
+              <div class="mega-link">Groups (GMS)</div>
+              <div class="mega-link">Infrastructure Booking</div>
+              <div class="mega-link">Guest House Booking <span class="badge-new">NEW</span></div>
+              <div class="mega-link">Sports Module</div>
+              <div class="mega-link">Smrithi</div>
+              <div class="mega-link">Buy and Sell</div>
+              <div class="mega-link">Eduroam Account</div>
+            </div>
+            <div class="mega-block">
+              <div class="mega-heading">Forums</div>
+              <div class="mega-link">Login to Forum <span class="badge-new">NEW</span></div>
+            </div>
+          </div>
+          <div class="mega-col">
+            <div class="mega-block">
+              <div class="mega-heading">Residential</div>
+              <div class="mega-link">Hostel Dashboard</div>
+              <div class="mega-link">Mess Finance Dashboard <span class="badge-new">NEW</span></div>
+              <div class="mega-link">Hostel Complaints</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-dropdown">
+        <div class="nav-item" onclick="event.stopPropagation();toggleNavMenu('alumni')"><em class="nav-icon-big lnr-earth"></em><span>Alumni</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="mega-menu hidden" id="navmenu-alumni" onclick="event.stopPropagation()">
+          <div class="mega-col" style="min-width:170px;">
+            <div class="mega-link">Donations <span class="badge-new">NEW</span></div>
+            <div class="mega-link">Directory <span class="badge-new">NEW</span></div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="search-wrapper">
+      <img src="assets/search-icon.png" alt="Search" class="search-icon">
+      <input type="text" placeholder="Search for..." class="form-control smartsearch ui-autocomplete-input" id="autosuggest_menu_input" autocomplete="off">
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-icons">
+      <div class="icon-btn">
+        <span class="bell-wrap">
+          <i class="fa fa-bell opacity-8" id="notif_bell" style="color: rgb(103, 112, 210) !important; height: 21.5385px;"></i>
+          <span id="notif_indicator_dot" class="small" style="position: absolute; top: 0px; right: 0px;">🔴</span>
+        </span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="icon-btn"><img src="assets/nitk-logo.png" alt="NITK" class="header-nitk-icon"></div>
+      <div class="header-divider"></div>
+      <div class="profile-trigger" onclick="event.stopPropagation();toggleProfileDropdown()">
+        <img class="avatar" id="header-avatar" src="" alt="">
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <div tabindex="-1" role="menu" class="profile-dropdown hidden rm-pointers dropdown-menu-lg dropdown-menu dropdown-menu-right show" id="profile-dropdown" onclick="event.stopPropagation()">
+          <div class="dropdown-menu-header">
+            <div class="dropdown-menu-header-inner bg-focus">
+              <div class="menu-header-image opacity-2"></div>
+              <div class="menu-header-content text-left">
+                <div class="widget-content p-0">
+                  <div class="widget-content-wrapper">
+                    <div class="widget-content-left mr-3">
+                      <img class="rounded" width="42" id="pd-avatar" src="" alt="">
+                    </div>
+                    <div class="widget-content-left">
+                      <div class="widget-heading" id="pd-name">—</div>
+                      <div class="widget-subheading opacity-8"></div>
+                    </div>
+                    <div class="widget-content-right mr-2" style="display: block">
+                      <a class="btn-pill btn-shine btn btn-focus" rel="nofollow" onclick="handleLogout()">Log Out</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-area-xs">
+            <div class="scrollbar-container ps">
+              <ul class="nav flex-column">
+                <li class="nav-item-header nav-item">My Account</li>
+                <li class="nav-item"><a class="nav-link" id="pd-profile-link" onclick="showView('profile')">Profile</a></li>
+                <li class="nav-item"><a class="nav-link">Change Password</a></li>
+                <li class="nav-item text-center" style="padding: 0.5rem 1rem;">
+                  <span class="switch-theme-text">Theme</span>
+                  <div class="mt-2" id="theme-toggle">
+                    <div role="group" class="btn-group nav btn-group">
+                      <button type="button" id="button_theme_system" value="system" class="btn-pill btn btn-primary btn-theme" onclick="setTheme(this)"><i class="fa fa-lg fa-laptop"></i></button>
+                      <button type="button" id="button_theme_dark" value="dark" class="btn-pill btn btn-dark btn-theme" onclick="setTheme(this)"><i class="fa fa-lg fa-moon"></i></button>
+                      <button type="button" id="button_theme_light" value="light" class="btn-pill btn btn-light btn-theme active" onclick="setTheme(this)"><i class="fa fa-lg fa-sun"></i></button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="breadcrumb-bar v-dash">
+    <div class="bc-left">
+      <div class="bc-title">Dashboard <span class="bar">|</span> IRIS</div>
+      <div class="bc-sub">Home / User Dashboard</div>
+    </div>
+    <div class="bc-actions">
+      <button type="button" class="btn-shadow btn btn-dark"><span class="btn-icon-wrapper pr-2 opacity-7"><i class="fa fa-comment fa-w-20"></i></span>Tell IRIS</button>
+      <div class="d-inline-block dropdown">
+        <button type="button" class="btn-shadow dropdown-toggle btn btn-light"><span class="btn-icon-wrapper pr-2 opacity-7"><i class="fa fa-star fa-w-20"></i></span>Frequently Visited</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-toggle-bar">
+    <div class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">
+      <img src="assets/menu-icon.png" alt="" class="menu-icon" id="menu-icon">
+      <span id="menu-toggle-text">Close Menu</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar v-dash" id="sidebar">
+      <div class="side-heading">QUICK LINKS</div>
+      <a class="side-link">About IRIS</a>
+      <a class="side-link">IRIS Blog</a>
+      <a class="side-link">NITK Website</a>
+      <a class="side-link">Terms of Service</a>
+      <a class="side-link">Login to Moodle</a>
+
+      <div class="side-heading">MODULE DESIGNERS</div>
+      <a class="side-link">Akshay Revankar</a>
+      <a class="side-link">Govind Jeevan</a>
+
+      <div class="side-heading">SUPPORT</div>
+      <a class="side-link support-email">officers@iris.nitk.ac.in</a>
+    </aside>
+
+    <main class="main v-dash">
+      <div class="stat-cards">
+        <div class="card mb-3 widget-chart card-hover-shadow-2x text-left d-flex flex-row justify-content-start align-items-center" id="user-dashboard-credits-card">
+          <div class="icon-wrapper border-light rounded">
+            <div class="icon-wrapper-bg bg-light"></div>
+            <i class="lnr-graduation-hat text-primary"></i>
+          </div>
+          <div class="d-flex flex-column justify-content-between">
+            <div class="widget-chart-content">
+              <div class="widget-numbers" id="dash-credits">124</div>
+              <div class="widget-subheading">Major Credits</div>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-3 widget-chart card-hover-shadow-2x text-left d-flex flex-row justify-content-start align-items-center" id="user-dashboard-cgpa-card">
+          <div class="icon-wrapper border-light rounded">
+            <div class="icon-wrapper-bg bg-light"></div>
+            <i class="lnr-chart-bars icon-gradient bg-ripe-malin"></i>
+          </div>
+          <div class="d-flex flex-column">
+            <div class="widget-chart-content">
+              <div class="widget-numbers" id="cgpa-number"><span id="dash-cgpa-value">- -</span></div>
+              <div class="widget-subheading">Major CGPA</div>
+            </div>
+          </div>
+          <div class="eye-icon-wrapper" style="margin-left: auto; margin-top: -45px; margin-right: 5px;">
+            <button type="button" class="btn btn-link" id="toggle-cgpa" onclick="toggleCgpa()"><i class="fa fa-eye-slash" id="cgpa-eye" aria-hidden="true" title="Reveal CGPA"></i></button>
+          </div>
+        </div>
+        <div class="card mb-3 widget-chart card-hover-shadow-2x text-left d-flex flex-row justify-content-start align-items-center">
+          <div class="icon-wrapper border-light rounded">
+            <div class="icon-wrapper-bg bg-light"></div>
+            <i class="fa fa-sort-numeric-asc icon-gradient bg-arielle-smile"></i>
+          </div>
+          <div class="d-flex flex-column">
+            <div class="widget-chart-content">
+              <div class="widget-numbers" id="dash-semester">7<sup style="font-weight: lighter;">th</sup></div>
+              <div class="widget-subheading">Semester</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn" onclick="switchTab('announcements')" id="tabbtn-announcements">Announcements</button>
+        <button class="tab-btn active" onclick="switchTab('attendance')" id="tabbtn-attendance">Attendance</button>
+        <button class="tab-btn" onclick="switchTab('courses')" id="tabbtn-courses">Courses</button>
+      </div>
+
+      <div class="tab-panel" id="tabpanel-announcements">
+        <div class="announcement-item"><b>Mid-semester exam schedule released</b>Check the academics portal for your hall ticket and seating arrangement.</div>
+        <div class="announcement-item"><b>Library timings extended</b>The central library will remain open till midnight during exam week.</div>
+      </div>
+
+      <div class="tab-panel active" id="tabpanel-attendance">
+        <div class="attendance-cards" id="attendance-cards"></div>
+      </div>
+
+      <div class="tab-panel" id="tabpanel-courses">
+        <div class="courses-list" id="courses-list"></div>
+      </div>
+
+      <div class="row col-md-12 col-lg-12 freq-row">
+        <div class="col-md-5 col-lg-5">
+          <div class="mb-1 card mt-4" id="frequent_card">
+            <div class="card-header">
+              <i class="header-icon pe-7s-link icon-gradient bg-love-kiss">
+              </i>
+              <div class="card-header-title">Frequently Used</div>
+            </div>
+            <div class="card-body">
+              <div id="frequent_links"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== Profile view (sidebar) ===== -->
+    <aside class="sidebar v-prof" id="sidebar-profile">
+      <div class="side-heading">STUDENT PROFILE MENU</div>
+      <a class="side-link" onclick="showView('profile')">View Profile</a>
+      <a class="side-link" onclick="showView('profile', true)">Edit Profile</a>
+      <a class="side-link">NITK.EDU.IN Account</a>
+      <a class="side-link">Microsoft EDU Account</a>
+      <a class="side-link wrap">Authorized External Applications</a>
+      <a class="side-link">Change Password</a>
+
+      <div class="side-heading">MODULE DESIGNERS</div>
+      <a class="side-link">Akshay Revankar</a>
+      <a class="side-link">Nirmal Khedkar</a>
+
+      <div class="side-heading">SUPPORT</div>
+      <a class="side-link support-email">officers@iris.nitk.ac.in</a>
+    </aside>
+
+    <!-- ===== Profile view (content) ===== -->
+    <main class="main v-prof" id="profile-main">
+      <div class="fiori-container">
+        <div class="alert alert-info" id="profile-alert" role="alert">
+          Students can generate their ID Cards only in the first semester as per institute policy.
+          Contact <a href="mailto:misofficer@nitk.edu.in" class="alert-link">MIS Office</a> to get your
+          ID Card generated if you're in a higher semester.
+          <button type="button" class="close" aria-label="Close" onclick="document.getElementById('profile-alert').style.display='none'"><span aria-hidden="true">&times;</span></button>
+        </div>
+
+        <div class="prof-row">
+          <div class="prof-left">
+            <div class="main-card mb-3 card mt-4 card-hover-shadow-2x prof-photo-card text-center">
+              <div class="card-body">
+                <div class="profile_img">
+                  <div id="crop-avatar">
+                    <a title="Change your picture">
+                      <img class="img-responsive avatar-view w100" id="prof-photo" alt="Profile Picture" title="Change the profile picture" src="">
+                    </a>
+                  </div>
+                </div>
+                <div class="card-title" id="prof-name">—</div>
+                <ul class="list-unstyled user_data">
+                  <li>
+                    <i class="fa fa-graduation-cap user-profile-icon"></i>
+                    <span id="prof-degree-line">Student @ NITK, Surathkal</span>
+                  </li>
+                  <li class="m-top-xs"></li>
+                </ul>
+                <a class="mb-2 mr-2 btn-hover-shine btn btn-success" id="prof-edit-btn" onclick="startProfileEdit()">
+                  <i class="fa fa-edit m-right-xs"></i>Edit Profile
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="prof-right">
+            <div class="main-card card prof-card">
+              <div class="prof-card-header">
+                <div class="prof-header-title">
+                  <i class="header-icon pe-7s-pin icon-gradient bg-love-kiss"></i>
+                  User Profile
+                </div>
+                <ul class="prof-tabs" role="tablist">
+                  <li><a class="prof-tab active" id="proftab-profile" onclick="switchProfileTab('profile')">Profile</a></li>
+                  <li><a class="prof-tab" id="proftab-additional" onclick="switchProfileTab('additional')">Additional Details</a></li>
+                </ul>
+              </div>
+              <div class="prof-card-content">
+                <div class="form-error" id="profile-error" role="alert"></div>
+                <div class="prof-pane active" id="profpane-profile"></div>
+                <div class="prof-pane" id="profpane-additional"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 21V10l6-4 6 4v11"/><path d="M9 21v-6h6v6"/><path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01"/></svg>
+      Server: <span class="server-badge">6#N1</span>
+    </div>
+    <div class="right">IRIS @ NITK Surathkal 2026</div>
+  </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
