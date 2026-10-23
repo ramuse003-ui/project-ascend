@@ -590,3 +590,125 @@
   .menu-toggle-bar{display:block;padding-left:20px;}
   .main{width:100%;}
 }
+
+/* ===== Title bar on the profile view + "Frequently Visited" dropdown ===== */
+.bc-link{cursor:pointer;color:inherit;}
+.bc-link:hover{color:var(--purple);}
+.bc-actions .dropdown{position:relative;}
+.fv-menu{
+  position:absolute;top:100%;right:0;margin-top:.125rem;min-width:16rem;padding:.5rem 0;z-index:1100;
+  background:#fff;border:1px solid rgba(26,54,126,.15);border-radius:.5rem;text-align:left;
+  box-shadow:rgba(0,0,0,.21) 1px 0 50px;max-height:90vh;overflow-y:auto;overflow-x:hidden;
+}
+.fv-item{display:block;padding:.5rem 1.5rem;font-size:.88rem;font-weight:400;color:#212529;white-space:nowrap;cursor:pointer;text-decoration:none;}
+.fv-item:hover{background:#e9ecef;color:#16181b;}
+
+
+/* ================================================================
+   MOBILE LAYOUT (< 992px) - mirrors the original IRIS markup captured in mobile view:
+   top bar -> [hamburger | centred logo | kebab] -> centred title + buttons -> "Show Module Menu" bar
+   ================================================================ */
+.header-tools{display:contents;}               /* desktop: wrapper is invisible, children stay in the header flex row */
+.header .m-hamburger,.header .m-kebab{display:none;}
+
+@media(max-width:991.98px){
+  /* ---- top bar ---- */
+  .topbar{padding:4.5px 20px 4.5px 12px;min-height:42px;}
+  .topbar .top-bar-left{padding:0;}
+  .topbar .top-bar-right{padding:0;}
+  .csd-logo{height:27px;}
+
+  /* ---- header: hamburger | logo | kebab ---- */
+  .header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:0;row-gap:0;
+          padding:22px 24px;min-height:88px;flex-wrap:nowrap;}
+  .header .logo{grid-column:2;grid-row:1;justify-self:center;transform:scale(1.2,1.08);}
+  .header .m-hamburger{grid-column:1;grid-row:1;justify-self:start;display:flex;align-items:center;justify-content:center;
+               width:24px;height:32px;padding:0;border:0;background:none;cursor:pointer;}
+  .header .m-kebab{grid-column:3;grid-row:1;justify-self:end;display:flex;align-items:center;justify-content:center;
+           width:24px;height:32px;padding:0;border:0;border-radius:4px;background:var(--purple);color:#fff;
+           font-size:14px;cursor:pointer;box-shadow:0 .125rem .625rem rgba(103,112,210,.4);}
+  .kebab-dots{display:block;width:3.5px;height:3.5px;border-radius:50%;background:#fff;box-shadow:0 -6.5px 0 #fff,0 6.5px 0 #fff;}
+  .m-kebab.is-active{background:var(--purple-dark);}
+
+  /* hamburger bars (turn into an X while the menu is open) */
+  .hb-box{position:relative;display:block;width:24px;height:18px;}
+  .hb-inner,.hb-inner::before,.hb-inner::after{position:absolute;left:0;width:24px;height:2.5px;border-radius:4px;background:var(--purple);opacity:.85;transition:transform .2s ease,top .2s ease,opacity .2s ease;}
+  .hb-inner{top:8px;}
+  .hb-inner::before,.hb-inner::after{content:'';display:block;}
+  .hb-inner::before{top:-7px;}
+  .hb-inner::after{top:7px;}
+  .m-hamburger.is-active .hb-inner{transform:rotate(45deg);}
+  .m-hamburger.is-active .hb-inner::before{top:0;opacity:0;}
+  .m-hamburger.is-active .hb-inner::after{top:0;transform:rotate(-90deg);}
+
+  /* ---- slide-down panels ---- */
+  .header #main-nav,.header .header-tools{display:none;}
+  .header.nav-open #main-nav{
+    display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;
+    grid-column:1 / -1;grid-row:2;margin:18px 0 0;padding-top:6px;border-top:1px solid var(--border);
+  }
+  /* kebab card: floats under the header (does not push the page down), like the original's .header-mobile-open panel */
+  .header.tools-open .header-tools{
+    display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:0;
+    position:absolute;top:calc(100% + 18px);left:5%;width:90%;z-index:1100;   /* original: top:106px = 88px header + 18px */
+    padding:.75rem;background:#fff;border:1px solid #dee2e6;border-radius:50px;
+    box-shadow:0 .36875rem 1.1875rem rgba(13,16,45,.01),0 .6375rem 1.00625rem rgba(13,16,45,.01),0 .15rem .33125rem rgba(13,16,45,.03),0 .085rem .0875rem rgba(13,16,45,.02);
+  }
+  .header.nav-open.tools-open #main-nav{grid-row:2;}
+
+  .header #main-nav .nav-dropdown{width:100%;}
+  .header #main-nav .nav-item{padding:12px 4px;font-size:15px;gap:10px;}
+  .header #main-nav .nav-item .chev{margin-left:auto;}
+  .header #main-nav .nav-item > span::before{display:none;}
+  .header #main-nav .mega-menu{
+    position:static;flex-direction:column;gap:16px;min-width:0;
+    padding:2px 0 10px 34px;border:0;border-radius:0;box-shadow:none;background:transparent;
+  }
+  .header #main-nav .mega-col{min-width:0;}
+
+  .header-tools .header-spacer,.header-tools .header-divider{display:none;}
+  .header-tools .search-wrapper{flex:0 1 280px;width:auto;min-width:90px;order:0;border:0;border-radius:30px;padding:0;}
+  .header-tools .search-wrapper .search-icon{left:3px;}
+  .header-tools .header-icons{display:contents;}
+  .header-tools .avatar{width:42px;height:54px;}                 /* original: <img class="rounded" width="42"> */
+  .header-tools .header-nitk-icon{width:37px;height:37px;}       /* original: height 2.3rem */
+  .header-tools .profile-dropdown{top:calc(100% + 10px);}
+  .profile-dropdown{width:min(365px,calc(100vw - 16px));}
+
+  /* ---- title bar: centred title, breadcrumb hidden, buttons centred underneath ---- */
+  .breadcrumb-bar{flex-direction:column;align-items:center;justify-content:center;text-align:center;
+                  padding:25px 16px 24px;gap:0;}
+  .bc-left{margin:0;padding:0;}
+  .bc-left::before{display:none;}
+  .bc-title{font-size:18px;margin:0 0 23px;}
+  .bc-sub{display:none;}
+  .bc-actions{margin:0;justify-content:center;gap:3px;}
+  .bc-actions .btn-wide{padding:.3rem 1.5rem;}
+  .bc-actions .btn-dark{background:#444054;border-color:#444054;}      /* original uses .btn-focus */
+  .bc-actions .dropdown > .btn{margin-right:1rem;}                      /* original has .mr-3 on this button */
+  .fv-menu{max-width:calc(100vw - 24px);}
+  .fv-item{white-space:normal;}
+
+  /* ---- "Show Module Menu" bar ---- */
+  .menu-toggle-bar{display:flex;align-items:center;min-height:47px;padding:0 12px 0 1px;border-top:1px solid var(--border);}
+  .menu-toggle{gap:12px;padding:4px 6px;}
+}
+
+/* very narrow phones: keep the whole top bar (links + CSD logo) on one line */
+@media(max-width:575.98px){
+  .topbar{padding:4.5px 10px 4.5px 4px;font-size:11px;}
+  .topbar .nav-link{padding:6px 7px;}
+  .topbar .top-bar-right .nav{gap:2px;}
+  .csd-logo{height:22px;}
+}
+@media(max-width:379.98px){
+  .topbar{font-size:10.5px;}
+  .topbar .nav-link{padding:6px 5px;}
+}
+
+/* narrow phones: slightly smaller icons so the four items keep breathing room inside the pill */
+@media(max-width:575.98px){
+  .header-tools .icon-btn{width:36px;}
+  .header-tools .header-nitk-icon{width:32px;height:32px;}
+  .header-tools .avatar{width:38px;height:50px;}
+}

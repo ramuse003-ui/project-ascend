@@ -206,6 +206,7 @@ function toggleNavMenu(key){
   });
   // close profile dropdown if open
   document.getElementById('profile-dropdown').classList.add('hidden');
+  closeFvMenu();
 }
 
 document.addEventListener('click', function(){
@@ -220,6 +221,7 @@ function toggleProfileDropdown(){
     document.getElementById('navmenu-'+k).classList.add('hidden');
     document.getElementById('navmenu-'+k).previousElementSibling.classList.remove('open');
   });
+  closeFvMenu();
   document.getElementById('profile-dropdown').classList.toggle('hidden');
 }
 document.addEventListener('click', function(){
@@ -287,6 +289,8 @@ function renderDashboard(){
   document.getElementById('pd-avatar').src = avatar;
   document.getElementById('pd-name').textContent = state.name;
   document.getElementById('nav-roll-heading').textContent = state.roll || '—';
+  renderFvMenu();
+  updateTitleBar();
 
   const today = new Date();
   const dateStr = String(today.getDate()).padStart(2,'0')+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+today.getFullYear();
@@ -509,7 +513,50 @@ let profileEditing = false;
 
 function setView(name){
   document.getElementById('page-dashboard').dataset.view = name;
+  updateTitleBar();
+  closeFvMenu();
 }
+
+// Page title bar: "<Name> | IRIS" + "Home / Student / <Name>" on the profile page (as on the original),
+// "Dashboard | IRIS" + "Home / User Dashboard" on the dashboard.
+function updateTitleBar(){
+  const view = document.getElementById('page-dashboard').dataset.view;
+  const t = document.getElementById('bc-title'), sub = document.getElementById('bc-sub');
+  if(!t || !sub) return;
+  if(view === 'profile' && state.name){
+    t.innerHTML = esc(state.name) + ' <span class="bar">|</span> IRIS';
+    sub.innerHTML = '<a class="bc-link" onclick="showView(\'dashboard\')">Home</a> &nbsp;/&nbsp; Student &nbsp;/&nbsp; ' + esc(state.name);
+  } else {
+    t.innerHTML = 'Dashboard <span class="bar">|</span> IRIS';
+    sub.textContent = 'Home / User Dashboard';
+  }
+}
+
+// "Frequently Visited" dropdown (same entries the original lists for this user)
+function renderFvMenu(){
+  const host = document.getElementById('fv-menu');
+  if(!host) return;
+  const items = [];
+  if(state.name) items.push({t: state.name, a: "showView('profile')"});
+  const c0 = state.courses && state.courses[0];
+  if(c0) items.push({t: (c0.code ? c0.code + ' - ' : '') + c0.name + ' (' + new Date().getFullYear() + ')'});
+  items.push({t: 'Courses'}, {t: 'Manage your eduroam Account'});
+  if(state.name) items.push({t: 'Edit Profile | ' + state.name, a: "showView('profile', true)"});
+  host.innerHTML = items.map(i => '<a class="fv-item"' + (i.a ? ' onclick="' + i.a + '"' : '') + '>' + esc(i.t) + ' </a>').join('');
+}
+function closeFvMenu(){ const m = document.getElementById('fv-menu'); if(m) m.classList.add('hidden'); }
+function toggleFvMenu(){
+  closeNavMenus();
+  document.getElementById('profile-dropdown').classList.add('hidden');
+  document.getElementById('fv-menu').classList.toggle('hidden');
+}
+function closeNavMenus(){
+  NAV_KEYS.forEach(k=>{
+    document.getElementById('navmenu-'+k).classList.add('hidden');
+    document.getElementById('navmenu-'+k).previousElementSibling.classList.remove('open');
+  });
+}
+document.addEventListener('click', closeFvMenu);
 
 function applyViewFromHash(){
   const want = location.hash === '#profile' ? 'profile' : 'dashboard';
@@ -520,6 +567,9 @@ window.addEventListener('hashchange', applyViewFromHash);
 
 function showView(name, edit){
   document.getElementById('profile-dropdown').classList.add('hidden');
+  closeMobilePanels();
+  closeNavMenus();
+  closeFvMenu();
   if(mqMobile.matches) setSidebarOpen(false);
   if(name === 'profile'){
     if(location.hash !== '#profile') history.pushState(null, '', '#profile');
@@ -625,6 +675,8 @@ async function putDetails(body, btnId, busyLabel){
     profileData = {...profileData, name: r.name, details: r.details};
     state.name = r.name;
     document.getElementById('pd-name').textContent = r.name;
+    updateTitleBar();
+    renderFvMenu();
     profileEditing = false;
     renderProfile();
     return true;
@@ -670,3 +722,38 @@ function switchProfileTabKeepError(name){ const msg = document.getElementById('p
 
 // build the registration inputs (after the field list above is defined)
 buildRegisterDetails();
+
+// ================================================================ MOBILE HEADER (< 992px, same breakpoint as the original)
+// hamburger -> the four menus (Institute / Academics / Campus / Alumni); kebab -> search, bell, emblem, profile.
+function closeMobilePanels(){
+  const h = document.getElementById('main-header');
+  if(!h) return;
+  h.classList.remove('nav-open', 'tools-open');
+  const hb = document.getElementById('m-hamburger'), kb = document.getElementById('m-kebab');
+  if(hb){ hb.classList.remove('is-active'); hb.setAttribute('aria-expanded', 'false'); }
+  if(kb){ kb.classList.remove('is-active'); kb.setAttribute('aria-expanded', 'false'); }
+}
+
+function toggleMobilePanel(which){
+  const h = document.getElementById('main-header');
+  const cls = which === 'nav' ? 'nav-open' : 'tools-open';
+  const willOpen = !h.classList.contains(cls);
+  closeMobilePanels();
+  closeNavMenus();
+  closeFvMenu();
+  document.getElementById('profile-dropdown').classList.add('hidden');
+  if(!willOpen) return;
+  h.classList.add(cls);
+  const btn = document.getElementById(which === 'nav' ? 'm-hamburger' : 'm-kebab');
+  btn.classList.add('is-active');
+  btn.setAttribute('aria-expanded', 'true');
+  // the original draws the hamburger as an X while the kebab card is open
+  if(which === 'tools') document.getElementById('m-hamburger').classList.add('is-active');
+}
+
+// tapping anywhere outside the header closes the panels
+document.addEventListener('click', function(e){
+  if(!e.target.closest('#main-header')) closeMobilePanels();
+});
+// leaving the mobile layout (rotate / resize) resets it
+window.matchMedia('(max-width: 991.98px)').addEventListener('change', closeMobilePanels);

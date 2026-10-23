@@ -133,7 +133,8 @@
     </div>
   </div>
 
-  <header class="header">
+  <header class="header" id="main-header">
+    <button type="button" class="m-hamburger" id="m-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" onclick="event.stopPropagation();toggleMobilePanel('nav')"><span class="hb-box"><span class="hb-inner"></span></span></button>
     <div class="logo" onclick="showView('dashboard')" style="cursor:pointer" title="Dashboard"><span class="lg-i1">I</span><span class="lg-r">r</span><span class="lg-i2">I</span><span class="lg-s">s</span></div>
     <nav class="nav" id="main-nav">
       <div class="nav-dropdown">
@@ -161,7 +162,7 @@
             </div>
             <div class="mega-block">
               <div class="mega-heading" id="nav-roll-heading">—</div>
-              <div class="mega-link">My Profile</div>
+              <div class="mega-link" onclick="showView('profile')">My Profile</div>
               <div class="mega-link">Manage nitk.edu.in Accounts</div>
             </div>
           </div>
@@ -242,6 +243,7 @@
         </div>
       </div>
     </nav>
+    <div class="header-tools" id="header-tools">
     <div class="header-spacer"></div>
     <div class="search-wrapper">
       <img src="assets/search-icon.png" alt="Search" class="search-icon">
@@ -305,17 +307,21 @@
         </div>
       </div>
     </div>
+    </div><!-- /header-tools -->
+    <!-- kebab (right) – original's .app-header__menu / mobile-toggle-header-nav -->
+    <button type="button" class="m-kebab" id="m-kebab" aria-label="Toggle header menu" aria-expanded="false" onclick="event.stopPropagation();toggleMobilePanel('tools')"><span class="kebab-dots" aria-hidden="true"></span></button>
   </header>
 
-  <div class="breadcrumb-bar v-dash">
+  <div class="breadcrumb-bar" id="title-bar">
     <div class="bc-left">
-      <div class="bc-title">Dashboard <span class="bar">|</span> IRIS</div>
-      <div class="bc-sub">Home / User Dashboard</div>
+      <div class="bc-title" id="bc-title">Dashboard <span class="bar">|</span> IRIS</div>
+      <div class="bc-sub" id="bc-sub">Home / User Dashboard</div>
     </div>
     <div class="bc-actions">
-      <button type="button" class="btn-shadow btn btn-dark"><span class="btn-icon-wrapper pr-2 opacity-7"><i class="fa fa-comment fa-w-20"></i></span>Tell IRIS</button>
+      <button type="button" class="btn-shadow btn btn-wide btn-dark"><span class="btn-icon-wrapper pr-2 opacity-7"><i class="fa fa-comment fa-w-20"></i></span>Tell IRIS</button>
       <div class="d-inline-block dropdown">
-        <button type="button" class="btn-shadow dropdown-toggle btn btn-light"><span class="btn-icon-wrapper pr-2 opacity-7"><i class="fa fa-star fa-w-20"></i></span>Frequently Visited</button>
+        <button type="button" class="btn-shadow dropdown-toggle btn btn-light" onclick="event.stopPropagation();toggleFvMenu()"><span class="btn-icon-wrapper pr-2 opacity-7"><i class="fa fa-star fa-w-20"></i></span>Frequently Visited</button>
+        <div class="fv-menu hidden" id="fv-menu" role="menu" onclick="event.stopPropagation()"></div>
       </div>
     </div>
   </div>
@@ -443,12 +449,15 @@
     <!-- ===== Profile view (content) ===== -->
     <main class="main v-prof" id="profile-main">
       <div class="fiori-container">
+        <div class="alert-block"></div>
+        <!-- Optional flash banner (not present on the captured original page). To bring it back, move it out of this comment:
         <div class="alert alert-info" id="profile-alert" role="alert">
           Students can generate their ID Cards only in the first semester as per institute policy.
           Contact <a href="mailto:misofficer@nitk.edu.in" class="alert-link">MIS Office</a> to get your
           ID Card generated if you're in a higher semester.
           <button type="button" class="close" aria-label="Close" onclick="document.getElementById('profile-alert').style.display='none'"><span aria-hidden="true">&times;</span></button>
         </div>
+        -->
 
         <div class="prof-row">
           <div class="prof-left">
