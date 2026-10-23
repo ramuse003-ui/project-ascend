@@ -367,20 +367,39 @@ document.getElementById('login-roll').addEventListener('keydown', e => { if(e.ke
   try { await loadDashboard(); } catch(e) { /* not signed in: stay on the login page */ }
 })();
 
-function toggleSidebar(){
-  const sidebars = document.querySelectorAll('.sidebar');
-  const icon = document.getElementById('menu-icon');
-  const text = document.getElementById('menu-toggle-text');
-  const collapsed = !sidebars[0].classList.contains('collapsed');
-  sidebars.forEach(sb => sb.classList.toggle('collapsed', collapsed));
-  if(collapsed){
-    text.textContent = 'Show Module Menu';
-    icon.classList.add('flipped');
-  } else {
-    text.textContent = 'Close Menu';
-    icon.classList.remove('flipped');
-  }
+// Module menu (left sidebar). Same rule as the original IRIS: at 992px and wider it is open beside the page;
+// below that (phones, including "desktop site" mode at ~980px) it is closed and opens as an overlay.
+const mqMobile = window.matchMedia('(max-width: 991.98px)');
+
+function sidebarIsOpen(){
+  if(mqMobile.matches) return document.getElementById('page-dashboard').classList.contains('mobile-menu-open');
+  return !document.querySelector('.sidebar').classList.contains('collapsed');
 }
+
+function setSidebarOpen(open){
+  const page = document.getElementById('page-dashboard');
+  const sidebars = document.querySelectorAll('.sidebar');
+  if(mqMobile.matches){
+    page.classList.toggle('mobile-menu-open', open);
+    sidebars.forEach(sb => sb.classList.remove('collapsed'));
+  } else {
+    page.classList.remove('mobile-menu-open');
+    sidebars.forEach(sb => sb.classList.toggle('collapsed', !open));
+  }
+  document.getElementById('menu-toggle-text').textContent = open ? 'Close Menu' : 'Show Module Menu';
+  document.getElementById('menu-icon').classList.toggle('flipped', !open);
+}
+
+function toggleSidebar(){ setSidebarOpen(!sidebarIsOpen()); }
+
+// closed by default on small screens, open on large ones; re-applied when the window size class changes
+setSidebarOpen(!mqMobile.matches);
+mqMobile.addEventListener('change', () => setSidebarOpen(!mqMobile.matches));
+
+// on small screens, tapping outside the menu closes it
+document.addEventListener('click', function(e){
+  if(mqMobile.matches && sidebarIsOpen() && !e.target.closest('.sidebar') && !e.target.closest('#menu-toggle')) setSidebarOpen(false);
+});
 
 
 // ================================================================ PROFILE DETAILS (register form + Profile page)
@@ -501,6 +520,7 @@ window.addEventListener('hashchange', applyViewFromHash);
 
 function showView(name, edit){
   document.getElementById('profile-dropdown').classList.add('hidden');
+  if(mqMobile.matches) setSidebarOpen(false);
   if(name === 'profile'){
     if(location.hash !== '#profile') history.pushState(null, '', '#profile');
     openProfile(!!edit);

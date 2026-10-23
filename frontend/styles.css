@@ -434,7 +434,6 @@
   .server-badge{background:#17b6a7;color:#fff;font-weight:700;font-size:11px;padding:2px 8px;border-radius:5px;}
 
   @media (max-width:900px){
-    .sidebar{display:none;}
     .header{padding:12px 16px;}
     .nav{display:none;}
     .search-wrapper{order:3;flex-basis:100%;width:100%;}
@@ -442,7 +441,6 @@
     .header-divider{display:none;}
     .breadcrumb-bar{padding:14px 16px;}
     .bc-actions{margin-right:0;}
-    .menu-toggle-bar{display:none;}
     .main{padding:18px 16px 50px;}
     .topbar{padding:6px 14px;}
     .footer{padding:12px 16px;flex-direction:column;gap:6px;align-items:flex-start;}
@@ -492,7 +490,8 @@
 .side-link.wrap{white-space:normal;line-height:1.5;}
 
 /* ===== Profile page (original IRIS layout) ===== */
-.fiori-container{width:calc(95vw - 270px);max-width:100%;margin:0;transition:all .2s;}
+.fiori-container{width:100%;max-width:100%;margin:0;transition:all .2s;}
+@media(min-width:992px){#sidebar-profile:not(.collapsed) ~ #profile-main .fiori-container{width:calc(95vw - 270px);}}
 #profile-main{padding:16px 28px 60px;}
 .fiori-container .alert-info{position:relative;background:#cff0ff;border:1px solid #bde7fb;color:#0c5575;border-radius:3px;padding:.75rem 3rem .75rem 1.25rem;font-size:14.4px;margin:0 0 16px;}
 .fiori-container .alert-info .alert-link{font-weight:700;color:#0c5575;text-decoration:none;}
@@ -548,7 +547,7 @@
 .prof-note{background:#fff7e0;border:1px solid #f7d98b;color:#7a5a00;border-radius:3px;padding:10px 14px;font-size:12.82px;margin-bottom:12px;}
 #profile-error{margin:0 0 12px;}
 
-@media(max-width:900px){
+@media(max-width:767.98px){
   .fiori-container{width:100%;}
   #profile-main{padding:14px 16px 50px;}
   .prof-row{flex-direction:column;gap:0;}
@@ -559,7 +558,7 @@
   .prof-tab{padding:12px 12px;}
   .prof-card-content{padding:1rem;}
 }
-@media(max-width:640px){
+@media(max-width:767.98px){
   .prof-row2{grid-template-columns:1fr;}
 }
 
@@ -580,3 +579,14 @@
 #profile-main .prof-photo-card .btn-success i{font-size:13.68px;margin-right:0;}
 
 #profile-main .prof-right .prof-card{margin-top:1.5rem;}
+
+/* ===== Mobile: module menu closed by default, opens as an overlay (same breakpoint as the original IRIS, 992px) ===== */
+@media(max-width:991.98px){
+  .layout{position:relative;}
+  .sidebar{display:none;position:absolute;top:0;left:0;bottom:0;z-index:15;width:270px;max-width:85vw;min-height:480px;background:#fff;
+           box-shadow:.46875rem 0 2.1875rem rgba(13,16,45,.08),.9375rem 0 1.40625rem rgba(13,16,45,.06),.25rem 0 .53125rem rgba(13,16,45,.08);border-right:0;}
+  .sidebar.collapsed{width:270px !important;max-width:85vw;padding:16px 20px 40px !important;opacity:1 !important;border-color:transparent !important;}
+  #page-dashboard.mobile-menu-open .sidebar{display:block;}
+  .menu-toggle-bar{display:block;padding-left:20px;}
+  .main{width:100%;}
+}
